@@ -6,49 +6,41 @@ class date:
 
     def __init__(self, day=0, month=0, year=0):
             #set the current date
-            # if date or month or year = 0 
+            # if date or month
             # set to current date or month or year respectively to date only
             # if input is (12,0,2021)
             # then month will be assign to current month
-        if day == 0 or month == 0 or year ==0:
+        if day == 0 or month == 0:
             cDate = self.getCurrentDate()
             #cDate[0] -> day    #cDate[1] -> month    #cDate[2] -> year
             if day == 0:
                 day = cDate.day
             if month == 0:
-                month = cDate.month
-            if year == 0:
-                year = cDate.year
-        
+                month == cDate.month
+           
 
         if self.isValidDate(day,month,year):
             self.day = day
             self.month = month
             self.year = year
-        
-        else:
-            raise ValueError('Date is Not Valid, "0<year<=9999" , "1<=month<=12" , "1<=day<=31" (differ month to month)') 
-    
-    @classmethod
-    def _makeInt(cls,*dt):
-        #return date in int format if not int
-        return (int(x) for x in  dt)
+
+
 
     @classmethod
     def isValidDate(cls,day,month,year):
         #Checking if date is valid or not 
         #otherwise raise exception
-        # if(type(day) != int or type(month) != int or type(year) != int):
-        #     raise TypeError('type of day, month and year should be string')
-        day,month,year = cls._makeInt(day,month,year)
+        if(type(day) != int or type(month) != int or type(year) != int):
+            raise TypeError('type of day, month and year should be string')
         if (cls.isValidYear(year) and cls.isValidMonth(month) and cls.isValidDay(day,month,year)):
             return True
-        return False
+        else:
+            raise ValueError('Date is Not Valid, "0<=year<=9999" , "1<=month<=12" , "1<=day<=31" (differ month to month)') 
 
     @classmethod
     def isValidYear(cls,year):
-        return year>0 and year <= 9999
-        #if 0<year<=9999 then it is a valid year
+        return year>=0 and year <= 9999
+        #if 0<=year<=9999 then it is a valid year
     
     @classmethod
     def isValidMonth(cls,month):
@@ -57,27 +49,20 @@ class date:
 
     @classmethod
     def isValidDay(cls,day,month,year):
-
-        return cls.isValidYear(year) and cls.isValidMonth(month) and day>=1 and day<=cls.getNumberOfDaysInMonth(month,year)
+        return day>=1 and day<=cls.getNumberOfDaysInMonth(month,year)
         #it checks is Year a leap year or not then month and then it validate
 
     
     @classmethod
-    def getNumberOfDaysInMonth(cls,month=1,year=1):
-        # return no. of month in that month if month and year is valid else return None
-        if cls.isValidMonth(month) and cls.isValidYear(year):
-            if month == 2 and cls.isLeapYear(year):
-                return 29
-            return cls.nDays[month -1]
-        else:
-            return None
+    def getNumberOfDaysInMonth(cls,month,year):
+        
+        if month == 2 and cls.isLeapYear(year):
+            return 29
+        return cls.nDays[month -1]
 
 
     @classmethod
     def isLeapYear(cls,year):
-        if not cls.isValidYear(year):
-            return False
-            # raise ValueError("Year is not valid  it should be in 0<year<=9999")
         #return True or False based on The year type
         if (year % 4 == 0):
             if (year % 100 == 0 and year % 400 != 0):
@@ -94,23 +79,20 @@ class date:
 
     
     def changeDay(self,day):
-        if self.isValidDate(day,self.month,self.year):
+        if self.isValid(day,self.month,self.year):
             self.day = day
-        else:
-            raise ValueError("Will become Invalid date")
     
     def changeMonth(self,month):
-        if self.isValidDate(self.day,month,self.year):
+        if self.isValid(self.day,month,self.year):
             self.month = month
-        else:
-            raise ValueError("Will become Invalid date")
     
     def changeYear(self,year):
-        if self.isValidDate(self.day,self.month,year):
+        if self.isValid(self.day,self.month,year):
             self.year = year
-        else:
-            raise ValueError("Will become Invalid date")
 
+         
+    def _manageDate(self,day,month,year):
+        pass
         
 
     def _countLeapYears(self):
@@ -132,12 +114,11 @@ class date:
         return ans
 
 
-
     def _getNoOfDays(self):
         # COUNT TOTAL NUMBER OF DAYS
 
         # initialize count using years and day
-        n = (self.year-1) * 365 + self.day
+        n = self.year * 365 + self.day
 
         # Add days for months in given date
         for i in range(0, self.month - 1):
@@ -149,40 +130,39 @@ class date:
         return n
 
     def _createDateFromDays(self,days):
-        year = 1
+        year = 0
         month = 1
-        day = 0
-        if(days > 146097):
+        day = 1
+        if(days >= 146097):
             #146097 == 400 years
             year += (days // 146097)*400
             days %= 146097
         
-        if(days > 36524):
+        if(days >= 36524):
             #36524 == 100 years
             year += (days // 36524)*100
             days %= 36524
         
-        if(days > 1461):
+        if(days >= 1461):
             #1461 == 4 years
             year += (days //1461)*4
             days %= 1461
 
-        if(days > 365):
+        if(days >= 365):
             #365 == 1 year
             year += days // 365
             days %= 365
 
 
-
         for i in range(12):
-            if days > self.nDays[i]:
+            if days >= self.nDays[i]:
                 month +=1
                 days -= self.nDays[i]
                 if(self.isLeapYear(year)) and i == 1:
                     days -=1
-                    if(days <= 0):
+                    if(days < 0):
                         month -=1
-                        days = 29
+                        days = 28
             else:
                 break
         
@@ -195,167 +175,119 @@ class date:
 
 
 
-
-
-    def _manageDays(self,days):
-        year = 0
-        month = 0
-        day = 0
-        if(days > 146097):
-            #146097 == 400 years
-            year += (days // 146097)*400
-            days %= 146097
-        
-        if(days > 36524):
-            #36524 == 100 years
-            year += (days // 36524)*100
-            days %= 36524
-        
-        if(days > 1461):
-            #1461 == 4 years
-            year += (days //1461)*4
-            days %= 1461
-
-        if(days > 365):
-            #365 == 1 year
-            year += days // 365
-            days %= 365
-
-
-
-        for i in range(12):
-            if days > self.nDays[i]:
-                month +=1
-                days -= self.nDays[i]
-                if i == 1 and self.isLeapYear(year):
-                    days -=1
-                    if(days <= 0):
-                        month -=1
-                        days = 29
-            else:
-                break
-        
-        day += days
-        return (day,month,year)
-
-
-
-
-
-
-
-
-
-
-
-
-
     def getDifferenceInDays(self, date1):
         # return no of Days between Two Dates
         return (self._getNoOfDays() - date1._getNoOfDays())
 
     
     def differenceWithCurrentDate(self):
-        return self.getDifferenceWithDate(self.getCurrentDate())
+        return self.getDifferenceWithDate(self.getCurrentDate)
         #return difference from current date
     
-
     def getDifferenceWithDate(self,date1):
-        #returns a tuple (x days,y months, z years, status)
-        #status represents difference is negative or positive
-        diff = self.getDifferenceInDays(date1)
+        day = self.day - date1.day
+        month = self.month  - date1.month
+        year = self.year - date1.year
+
+        diff = self._manageDate(day,month,year)
         status = 'P'
-        if(diff < 0):
+        if (diff[2]<0):
             status = 'N'
-            diff *= -1
-    
-        tempDate = self._manageDays(diff)
+            diff = date1.getDifferenceWithDate(self)
         
-        return (tempDate[0],tempDate[1],tempDate[2],status)
+        return tuple(diff[0],diff[1],diff[2],status)
+        #return difference
     
 
-
-
-
-
-    #operators overloading starts here
 
 
     def __sub__(self,date1):
-        return self.getDifferenceWithDate(date1)
+        return self.getDifferenceBetweenTwoDates(date1)
 
 
-    def __lt__(self,date1):
+    def __LT__(self,date1):
         #returns true if d1 < d2
-        diff = self.getDifferenceInDays(date1)
-        if (diff <0):
+        diff = self.__sub__(date1)
+        if (diff[3] == 'N'):
             return True
         return False
     
-    def __gt__(self,date1):
+    def __GT__(self,date1):
         #returns true if d1 > d2
-        diff = self.getDifferenceInDays(date1)
-        if (diff > 0):
+        diff = self.__sub__(date1)
+        if (diff[3] == 'P'):
             return True
         return False
     
-    def __eq__(self,date1):
+    def __EQ__(self,date1):
         #returns true if d1 == d2
-        diff = self.getDifferenceInDays(date1)
-        if (diff== 0):
+        diff = self.__sub__(date1)
+        if (diff[0] == 0 and diff[1] == 0 and diff[2] == 0):
             return True
         return False
     
-    def __le__(self,date1):
+    def __LE__(self,date1):
         #returns true if d1 <= d2
-        if self < date1 or self==date1:
+        if self.__LT__(date1) or self.__EQ__(date1):
             return True
         return False
 
-    def __ge__(self,date1):
+    def __GE__(self,date1):
         #returns true if d1 >= d2
-        if self > date1 or self==date1:
+        if self.__GT__(date1) or self.__EQ__(date1):
             return True
         return False
     
-    def __ne__(self,date1):
+    def __NE__(self,date1):
         # returns true if d1 != d2
-        return not self == date1
+        return not self.__EQ__(date1)
 
-    #operators overloading ends here
-
-
-
+    # Comparison Operators :
+    # Operator Magic Method
+    # < __LT__(SELF, OTHER)
+    # > __GT__(SELF, OTHER)
+    # <= __LE__(SELF, OTHER)
+    # >= __GE__(SELF, OTHER)
+    # == __EQ__(SELF, OTHER)
+    # != __NE__(SELF, OTHER)
 
 
     def getDateXDaysAfter(self,x):
-        days = self._getNoOfDays() + x
-        if(days >= 0):
-            return self._createDateFromDays(days)
-        else:
-            raise ValueError("Invalid input")
-        
+        pass
         #return date after x days
     
+    def getDateXMonthsAfter(self,x):
+        pass
+        #return date after x months
+
+    def getDateXYearsAfter(self,x):
+        pass
+        #return date after x years
 
     def getDateXDaysBefore(self,x):
-        return self.getDateXDaysAfter(-1*x)
+        pass
         #return date before x days
-  
     
+    def getDateXMonthsBefore(self,x):
+        pass
+        #return date before x months
 
+    def getDateXYearsBefore(self,x):
+        pass
+        #return date before x years
     
 
 
 
 
     def getDayName(self):
-        import pandas as pd
-        d = pd.Timestamp(f'{self.year}-{self.month}-{self.day}')
-        return d.day_name()
+        pass
         #return day name like sunday, Monday
 
 
+
+    
+    
     def getCurrentDate(self):
         #return current machine date obj
         from datetime import date as dt
@@ -364,14 +296,16 @@ class date:
         return date(*today)
         # return date(day=today[0],month=today[1],year=today[2])
 
-    
-    
-    
-    
-    
+
     def __repr__(self):
         return f"date({self.day}/{self.month}/{self.year})"
 
-     
+    
+    
+    '''
+        Also overload operator
+        - for difference between two dates
+    '''
+    
 
     
