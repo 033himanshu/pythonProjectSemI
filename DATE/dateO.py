@@ -88,41 +88,9 @@ class date:
             return False
 
 
-    def getDateWithDifferentFormat(self,formate = '%Mn %d %y ,%wd'):
-        '''
-            formats
-
-            %d - %m - %y %w  :  2 - 1 - 2002 Wed
-            %m - %d - %y   :  1 - 2 - 2002
-            %d %m %y       :  2 1 2002
-            %d %M %y       :  2 Jan 2002
-            %M %d , %y     :  Jan 2 , 2002
-            %Mn %d , %y    :  January 2 , 2002
-            %d %m %y ,%wd  : 2 1 2002 , Wednesday
-        '''
+    def getDate(self,formate):
+        pass
         #return date in given format
-		
-        nMonth = ('January','February','March','April','May','June','July','August','September','October','November','December')
-        if '%d' in formate:
-            formate = formate.replace('%d',str(self.day))
-        if '%Mn' in formate:
-            formate = formate.replace('%Mn',nMonth[self.month-1])
-        elif '%M' in formate:
-            formate = formate.replace('%M',nMonth[self.month-1][:3])
-        elif '%m' in formate:
-            formate = formate.replace('%m',str(self.month))
-        if '%y' in formate:
-            formate = formate.replace('%y',str(self.year))
-        if '%wd' in formate:
-            formate = formate.replace('%wd',self.getDayName())
-        elif '%w' in formate:
-            formate = formate.replace('%w',self.getDayName()[:3])
-
-
-        return formate
-		
-		
-
 
     
     def changeDay(self,day):
