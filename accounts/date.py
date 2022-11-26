@@ -341,6 +341,18 @@ class date:
         return date(*today)
         # return date(day=today[0],month=today[1],year=today[2])
 
+    def getWeekEnd(self):
+        today = self
+        for i in range(0,8):
+            if today.getDayName() == 'Sunday':
+                return (today,)
+            if today.getDayName() == 'Saturday':
+                return (today,today.getDateXDaysAfter(1))
+            today = today.getDateXDaysAfter(1)
+
+
+
+
     def __repr__(self):
         return f"date({self.day}/{self.month}/{self.year})"
 

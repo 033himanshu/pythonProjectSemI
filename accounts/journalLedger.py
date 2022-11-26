@@ -79,6 +79,45 @@ trans = [
     # tuple(account,transaction)
 ]
 
+
+def pickleAcc():
+    global acc
+    import pickle
+    with open('acc.pickle','wb') as file:
+        pickle.dump(acc,file)
+
+
+def unpickleAcc():
+    global acc
+    import pickle
+    try:
+        with open('acc.pickle','rb') as file:
+            acc = pickle.load(file)
+    except:
+        print("Server Not Found")
+
+def pickleTrans():
+    global trans
+    import pickle
+    with open('trans.pickle','wb') as file:
+        pickle.dump(trans,file)
+
+
+def unpickleTrans():
+    global trans
+    import pickle
+    try:
+        with open('trans.pickle','rb') as file:
+            trans = pickle.load(file)
+    except:
+        print("Server Not Found")
+
+def initialize():
+    unpickleAcc()
+    unpickleTrans()
+    print(trans)
+    print(acc)
+
 def beautifyName(name):
     name = name.split()
     return " ".join(n.capitalize() for n in name)
@@ -156,7 +195,8 @@ def takeEntry():
         createEntry(name, 'cash', dt, amount, typ, note)
 
     trans.append(tran)
-
+    pickleTrans()
+    pickleAcc()
 
 def doOperation(ch):
     if ch == '1':

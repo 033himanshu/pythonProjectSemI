@@ -1,4 +1,5 @@
 from journalLedger import *
+initialize()
 #-----------------------------------Main Starts from Here-----------------------------#
 ch = "go"
 while ch:
